@@ -25,7 +25,7 @@ function register()
     }
 
     $this->home_url = home_url();
-    add_action('plugins_loaded', array($this, 'plugins_loaded'));
+    add_action('after_setup_theme', array($this, 'plugins_loaded'));
 }
 
 public function plugins_loaded()
@@ -66,7 +66,7 @@ public function save_post($id, $post)
 {
     if ($this->get_default_hostname() !== $_SERVER['HTTP_HOST']) {
         remove_action('save_post', array($this, 'save_post'));
-        $post->post_content = str_replace($_SERVER['HTTP_HOST'], $this->get_default_hostname(), $post->post_content);
+        $post->post_content = str_replace($this->get_http_host(), $this->get_default_hostname(), $post->post_content);
         wp_update_post($post);
         add_action('save_post', array($this, 'save_post'), 10, 10);
     }
@@ -75,7 +75,7 @@ public function save_post($id, $post)
 public function replace_host_name($uri)
 {
     if ($this->get_default_hostname() !== $_SERVER['HTTP_HOST']) {
-        return str_replace($this->get_default_hostname(), $_SERVER['HTTP_HOST'], $uri);
+        return str_replace($this->get_default_hostname(), $this->get_http_host(), $uri);
     } else {
         return $uri;
     }
@@ -89,6 +89,17 @@ private function get_default_hostname()
         $uri = parse_url($this->home_url);
     }
     return $uri['host'];
+}
+
+private function get_http_host() {
+    $HTTP_HOST = $_SERVER['HTTP_HOST'];
+    if (defined('TEST_HOME')) {
+        $test_uri = parse_url(TEST_HOME);
+        if ( empty( $uri['path'] ) && !empty( $test_uri['path'] ) ) {
+            $HTTP_HOST .= $test_uri['path'];
+        }
+    }
+    return $HTTP_HOST;
 }
 
 }
