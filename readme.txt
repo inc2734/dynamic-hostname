@@ -14,6 +14,8 @@ Set hostname dynamically for the development.
 
 This plugin changes dynamically and automatically the host name which WordPress uses. For example, when you run WordPress on your different servers, for production, development or staging, the host name will be changed dynamically and those each sites won't have broken links. It's very useful when you use it with Vagrant Cloud.
 
+This plugins is customize version by inc2734.
+
 = Some features =
 
 * Temporarily changes the host name to the current host name ($_SERVER['HTTP_HOST']).

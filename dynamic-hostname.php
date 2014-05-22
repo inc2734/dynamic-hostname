@@ -77,6 +77,12 @@ public function save_post($id, $post)
 public function replace_host_name($uri)
 {
     if ($this->get_default_hostname() !== $_SERVER['HTTP_HOST']) {
+        if ( !is_array( $uri ) && preg_match( '/^\/[^\/]+/', $uri ) ) {
+            $test_uri = parse_url(TEST_HOME);
+            if ( !empty( $test_uri['path'] ) ) {
+                $uri = $test_uri['path'] . $uri;
+            }
+        }
         return str_replace($this->get_default_hostname(), $this->get_http_host(), $uri);
     } else {
         return $uri;
